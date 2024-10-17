@@ -2,6 +2,38 @@ import subprocess
 import json
 import os
 
+def detect_language_by_extension(file_path):
+    file_extension = os.path.splitext(file_path)[1].lower()
+    
+    if file_extension in ['.py']:
+        return 'Python'
+    elif file_extension in ['.js', '.jsx']:
+        return 'JavaScript'
+    elif file_extension in ['.ts', '.tsx']:
+        return 'TypeScript'
+    elif file_extension in ['.java']:
+        return 'Java'
+    elif file_extension in ['.go']:
+        return 'Go'
+    elif file_extension in ['.cpp', '.cc', '.cxx', '.c']:
+        return 'C/C++'
+    elif file_extension in ['.rb']:
+        return 'Ruby'
+    elif file_extension in ['.php']:
+        return 'PHP'
+    elif file_extension in ['.rs']:
+        return 'Rust'
+    elif file_extension in ['.cs']:
+        return 'C#'
+    elif file_extension in ['.html', '.htm']:
+        return 'HTML'
+    elif file_extension in ['.css']:
+        return 'CSS'
+    elif file_extension in ['.swift']:
+        return 'Swift'
+    else:
+        return '未知语言'
+
 def remove_existing_json(json_file):
     # 检查并删除已有的 semgrep.json 文件
     if os.path.exists(json_file):
@@ -46,11 +78,13 @@ def parse_semgrep_json(json_file):
         start_line = finding.get('start', {}).get('line', '未知行')
         vuln_type = finding.get('extra', {}).get('metadata', {}).get('category', '未知类型')
         message = finding.get('extra', {}).get('message', '无描述')
-        lang = finding.get('extra', {}).get('engine_name', '未知语言')
         severity = finding.get('extra', {}).get('severity', '未定义严重性')
         # 打印信息
+        # 根据文件路径后缀判断语言类型
+        lang = detect_language_by_extension(path)
+
         print(f"文件: {path}, 行号: {start_line}, 严重性: {severity}")
-        print(f"漏洞类型: {vuln_type}")
+        print(f"漏洞类型: {vuln_type}") 
         print(f"描述: {message}")
         print(f"语言: {lang}")
         print("-" * 50)
